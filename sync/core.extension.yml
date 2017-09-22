@@ -19,6 +19,8 @@ module:
   dblog: 0
   dynamic_page_cache: 0
   editor: 0
+  features: 0
+  features_ui: 0
   field: 0
   file: 0
   filter: 0
@@ -44,7 +46,6 @@ module:
   tour: 0
   update: 0
   user: 0
-  webprofiler: 0
   menu_link_content: 1
   views: 10
   standard: 1000
