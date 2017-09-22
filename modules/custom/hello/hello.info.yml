@@ -1,0 +1,8 @@
+name: 'Hello'
+type: module
+description: 'Ceci est mon premier module.'
+core: 8.x
+version: '8.x-1.4'
+package: Training
+dependencies:
+  - views

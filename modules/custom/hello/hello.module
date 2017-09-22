@@ -1,0 +1,81 @@
+<?php
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
+
+/**
+ * Implementation hook_cron().
+*/
+function hello_cron() {
+  drupal_set_message(t('Hello module cron task done.'), 'warning');
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function hello_user_login(User $account) {
+  // Fonction t().
+  // Il existe 3 types de jetons indiquant comment on substitue les variables.
+  // ! : le contenu de la variable est interprété.
+  // @ : le contenu de la variable est échappé.
+  // % : le contenu de la variable est échappé et la balise <em> est ajoutée.
+  drupal_set_message(t('Welcome dear %name!',
+                       array('%name' => $account->getAccountName())
+  ));
+}
+
+/**
+ * Implements hook_help().
+ */
+function hello_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the hello module.
+    case 'help.page.hello':
+      return '<p>' . t('Hello module\'s help page.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function hello_theme($existing, $type, $theme, $path) {
+  return array(
+    'hello_node_history' => array(
+      'template'  => 'hello-node-history',  // Automatiquement appelé en fonction du nom du hook de thème.
+      'variables' => array(
+        'node'  => NULL,
+        'count' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_node_update().
+ * @param \Drupal\node\NodeInterface $node
+ */
+function hello_node_update(NodeInterface $node) {
+  $user = \Drupal::currentUser();
+  $database = \Drupal::database();
+
+  $database->insert('hello_node_history')
+    ->fields(array(
+      'nid' => $node->id(),
+      'uid' => $user->id(),
+      'update_time' => time(),
+    ))
+    ->execute();
+}
+
+
+/**
+ * Implements hook_page_attachments().
+ * @param array $page
+ */
+function hello_page_attachments(array &$page) {
+  $page['#attached']['library'][] = 'hello/hello';
+}
+
